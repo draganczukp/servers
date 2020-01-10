@@ -1,0 +1,5 @@
+vars.env
+!vars.env.template
+db/database/
+traefik/acme.json
+heimdall/config
