@@ -4,11 +4,11 @@ services:
   traefik:
     image: traefik:v2.0
     container_name: traefik
-    restart: unless-stopped
+    restart: ${RESTART}
     security_opt:
       - no-new-privileges:true
     networks:
-      - proxy
+      - ${NETWORK}
     ports:
       - 80:80
       - 443:443
@@ -21,12 +21,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`proxy.draganczuk.tk`)"
+      - "traefik.http.routers.traefik.rule=Host(`proxy.${TLD}`)"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=killermenpl:$$apr1$$kgT8UxyR$$fmBn3HUbJQwH48UR7Wm5A."
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`proxy.draganczuk.tk`)"
+      - "traefik.http.routers.traefik-secure.rule=Host(`proxy.${TLD}`)"
       - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
       - "traefik.http.routers.traefik-secure.tls=true"
       - "traefik.http.routers.traefik-secure.tls.certresolver=http"
