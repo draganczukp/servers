@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+    jenkins:
+        build:
+            context: ./
+            dockerfile: 'jenkins-maven.dockerfile'
+        ports:
+            - '50000:50000'
+        volumes:
+            - 'jenkins_data:/jenkins_config'
+        container_name: 'jenkins'
+        networks:
+            - ${NETWORK}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.jenkins.entrypoints=http"
+            - "traefik.http.routers.jenkins.rule=Host(`jenkins.${TLD}`)"
+            - "traefik.http.middlewares.jenkins-https-redirect.redirectscheme.scheme=https"
+            - "traefik.http.routers.jenkins.middlewares=jenkins-https-redirect"
+            - "traefik.http.routers.jenkins-secure.entrypoints=https"
+            - "traefik.http.routers.jenkins-secure.rule=Host(`jenkins.${TLD}`)"
+            - "traefik.http.routers.jenkins-secure.tls=true"
+            - "traefik.http.routers.jenkins-secure.tls.certresolver=http"
+            - "traefik.http.routers.jenkins-secure.service=jenkins"
+            - "traefik.http.services.jenkins.loadbalancer.server.port=8080"
+            - "traefik.docker.network=proxy"
+        restart: ${RESTART}
+
+networks:
+    proxy:
+      external: true
+
+volumes:
+  jenkins_data:
+    driver: local

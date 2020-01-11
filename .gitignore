@@ -3,3 +3,4 @@ vars.env
 db/database/
 traefik/acme.json
 heimdall/config
+jenkins/data/
