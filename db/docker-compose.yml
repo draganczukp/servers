@@ -14,8 +14,6 @@ services:
   phpmyadmin:
       image: phpmyadmin/phpmyadmin
       container_name: phpmyadmin
-      ports:
-          - 8000:80
       env_file:
           - ../vars.env
       environment:
@@ -37,7 +35,7 @@ services:
           - "traefik.http.routers.phpmyadmin-secure.tls=true"
           - "traefik.http.routers.phpmyadmin-secure.tls.certresolver=http"
           - "traefik.http.routers.phpmyadmin-secure.service=phpmyadmin"
-          # - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+          - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
           - "traefik.docker.network=proxy"
       networks:
           - ${NETWORK}
