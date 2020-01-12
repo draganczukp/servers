@@ -20,4 +20,4 @@ certificatesResolvers:
       email: admin@draganczuk.tk
       storage: acme.json
       httpChallenge:
-        entryPoint: http
+        entryPoint: web
