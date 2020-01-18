@@ -11,6 +11,7 @@ services:
           - proxy
       env_file:
           - ../vars.env
+      restart: ${RESTART}
   phpmyadmin:
       image: phpmyadmin/phpmyadmin
       container_name: phpmyadmin
