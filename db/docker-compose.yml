@@ -9,6 +9,7 @@ services:
           - ./database:/var/lib/mysql
       networks:
           - proxy
+          - db
       env_file:
           - ../vars.env
       restart: ${RESTART}
@@ -43,4 +44,6 @@ services:
 
 networks:
     proxy:
+        external: true
+    db:
         external: true
