@@ -15,11 +15,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.heimdall.entrypoints=http"
-      - "traefik.http.routers.heimdall.rule=Host(`${TLD}`)"
+      - "traefik.http.routers.heimdall.rule=Host(`dashboard.${TLD}`)"
       - "traefik.http.middlewares.heimdall-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.heimdall.middlewares=heimdall-https-redirect"
       - "traefik.http.routers.heimdall-secure.entrypoints=https"
-      - "traefik.http.routers.heimdall-secure.rule=Host(`${TLD}`)"
+      - "traefik.http.routers.heimdall-secure.rule=Host(`dashboard.${TLD}`)"
       - "traefik.http.routers.heimdall-secure.tls=true"
       - "traefik.http.routers.heimdall-secure.tls.certresolver=http"
       - "traefik.http.routers.heimdall-secure.service=heimdall"
