@@ -1,0 +1,15 @@
+version: '3.2'
+
+services:
+  mc:
+    container_name: "mc-el"
+    image: itzg/minecraft-server
+    environment:
+      EULA: "true"
+      MAX_MEMORY: 6G
+      TYPE: CURSEFORGE
+      CF_SERVER_MOD: "./Chemical+Exchange+-+Server+-+1.7.zip"
+    volumes:
+      - ./data:/data
+    # ports:
+    #   - 25565:25565
