@@ -6,10 +6,10 @@ services:
     image: itzg/minecraft-server
     environment:
       EULA: "true"
-      MAX_MEMORY: 6G
+      MAX_MEMORY: 4G
       TYPE: CURSEFORGE
-      CF_SERVER_MOD: "./Chemical+Exchange+-+Server+-+1.7.zip"
+      CF_SERVER_MOD: "modpack.zip"
     volumes:
       - ./data:/data
-    # ports:
-    #   - 25565:25565
+    ports:
+      - 25565:25565
