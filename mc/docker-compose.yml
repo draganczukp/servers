@@ -2,11 +2,11 @@ version: '3.2'
 
 services:
   mc:
-    container_name: "mc-el"
+    container_name: "mc"
     image: itzg/minecraft-server
     environment:
       EULA: "true"
-      MAX_MEMORY: 4G
+      MAX_MEMORY: 6G
       TYPE: CURSEFORGE
       CF_SERVER_MOD: "modpack.zip"
     volumes:
