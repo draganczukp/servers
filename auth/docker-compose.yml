@@ -1,0 +1,28 @@
+version: "3"
+services:
+    keycloak:
+        image: jboss/keycloak
+        restart: ${RESTART}
+        networks:
+            - ${NETWORK}
+        env_file: .env
+        environment:
+            - DB_VENDOR=${KC_DB_VENDOR}
+            - DB_ADDR=${KC_DB_ADDR}
+            - DB_USER=${KC_DB_USER}
+            - DB_PASSWORD=${KC_DB_PASSWORD}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.auth.entrypoints=http"
+            - "traefik.http.routers.auth.rule=Host(`auth.${TLD}`)"
+            # - "traefik.http.routers.auth-secure.entrypoints=https"
+            # - "traefik.http.routers.auth-secure.rule=Host(`auth.${TLD}`)"
+            # - "traefik.http.routers.auth-secure.tls=true"
+            # - "traefik.http.routers.auth-secure.tls.certresolver=http"
+            # - "traefik.http.routers.auth-secure.service=auth"
+            - "traefik.http.services.auth.loadbalancer.server.port=8080"
+            - "traefik.docker.network=proxy"
+
+networks:
+    proxy:
+        external: true
