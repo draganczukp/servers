@@ -6,3 +6,4 @@ heimdall/config
 **/data/
 .env
 url
+*.env
