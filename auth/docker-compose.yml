@@ -30,11 +30,11 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.auth.entrypoints=http"
             - "traefik.http.routers.auth.rule=Host(`auth.${TLD}`)"
-            # - "traefik.http.routers.auth-secure.entrypoints=https"
-            # - "traefik.http.routers.auth-secure.rule=Host(`auth.${TLD}`)"
-            # - "traefik.http.routers.auth-secure.tls=true"
-            # - "traefik.http.routers.auth-secure.tls.certresolver=http"
-            # - "traefik.http.routers.auth-secure.service=auth"
+            - "traefik.http.routers.auth-secure.entrypoints=https"
+            - "traefik.http.routers.auth-secure.rule=Host(`auth.${TLD}`)"
+            - "traefik.http.routers.auth-secure.tls=true"
+            - "traefik.http.routers.auth-secure.tls.certresolver=http"
+            - "traefik.http.routers.auth-secure.service=auth"
             - "traefik.http.services.auth.loadbalancer.server.port=8080"
             - "traefik.docker.network=proxy"
 
@@ -43,5 +43,6 @@ volumes:
 
 networks:
     auth:
+        external: true
     proxy:
         external: true
