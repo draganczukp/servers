@@ -1,0 +1,11 @@
+version: "3"
+services:
+    terraria:
+        image: rfvgyhn/tmodloader
+        container_name: terraria
+        ports:
+            - 7777:7777
+        volumes:
+            - ./data/config.txt:/terraria-server/config.txt
+            - ./data/data:/terraria
+            - /etc/localtime:/etc/localtime:ro
