@@ -11,36 +11,27 @@ services:
             - nc.env
         volumes:
             - nc_db_data:/var/lib/mysql
+        restart: ${RESTART}
     nextcloud:
+      image: linuxserver/nextcloud
       container_name: nextcloud
-      image: nextcloud
       volumes:
-        - nextcloud:/var/www/html
+          - ./data/nextcloud:/data
+          - ./data/nextcloud.conf:/config
+      # ports:
+      #     - 443:443
       networks:
-        - ${NETWORK}
         - nc
+        - proxy
       env_file:
           - .env
           - nc.env
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.cloud.entrypoints=http"
-        - "traefik.http.routers.cloud.rule=Host(`cloud.${TLD}`)"
-        - "traefik.http.middlewares.cloud-https-redirect.redirectscheme.scheme=https"
-        - "traefik.http.routers.cloud.middlewares=cloud-https-redirect"
-        - "traefik.http.routers.cloud-secure.entrypoints=https"
-        - "traefik.http.routers.cloud-secure.rule=Host(`cloud.${TLD}`)"
-        - "traefik.http.routers.cloud-secure.tls=true"
-        - "traefik.http.routers.cloud-secure.tls.certresolver=http"
-        - "traefik.http.routers.cloud-secure.service=cloud"
-        - "traefik.http.services.cloud.loadbalancer.server.port=80"
-        - "traefik.docker.network=proxy"
       restart: ${RESTART}
 
 networks:
     nc:
     proxy:
-      external: true
+        external: true
 
 volumes:
   nc_db_data:
