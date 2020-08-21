@@ -1,28 +1,45 @@
 version: '3.2'
 
 services:
-  mc:
-    container_name: "mc"
-    image: itzg/minecraft-server
-    environment:
-      EULA: "true"
-      MAX_MEMORY: 7G
-      NABLE_RCON: "true"
-      RCON_PASSWORD: "rcn"
-      RCON_PORT: 28016
-      TYPE: CURSEFORGE
-      CF_SERVER_MOD: "modpack.zip"
-    volumes:
-      - ./data:/data
-    ports:
-      - 25565:25565
-  mc_rcon:
-      image: itzg/rcon
-      ports:
-        - "4326:4326"
-        - "4327:4327"
-      volumes:
-        - "rcon:/opt/rcon-web-admin/db"
+    mc:
+        container_name: "mc"
+        image: itzg/minecraft-server:multiarch
+        environment:
+            EULA: "true"
+            MAX_MEMORY: 4G
+            NABLE_RCON: "true"
+            RCON_PASSWORD: "rcon"
+            RCON_PORT: 28016
+            TYPE: FTBA
+            FTB_MODPACK_ID: 5
+            ENABLE_AUTOPAUSE: "true"
+            OPS: "draganczukp"
+            LEVEL_TYPE: voidworld
+            ALLOW_FLIGHT: "true"
+        volumes:
+            - ./data:/data
+        ports:
+            - 25565:25565
+        networks:
+            - mc
+    mc_rcon:
+        image: itzg/rcon
+        container_name: mc_rcon
+        ports:
+            - "4326:4326"
+            - "4327:4327"
+        volumes:
+            - "rcon:/opt/rcon-web-admin/db"
+        networks:
+            - mc
+        environment:
+            RWA_PASSWORD: "rcon"
+            RWA_ADMIN: "true"
+            RWA_RCON_HOST: "mc"
+            RWA_RCON_PASSWORD: "rcon"
+
+networks:
+    mc:
 
 volumes:
     rcon:

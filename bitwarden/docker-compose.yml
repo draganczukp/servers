@@ -1,0 +1,20 @@
+version: "3"
+services:
+    bitwarden:
+        image: bitwardenrs/server
+        container_name: bitwarden
+        volumes:
+            - ./data:/data
+        networks:
+            - proxy
+        restart: unless-stopped
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.pass.entrypoints=https"
+            - "traefik.http.routers.pass.rule=Host(`pass.draganczuk.cloud`)"
+            - "traefik.http.routers.pass.tls=true"
+            - "traefik.http.services.pass.loadbalancer.server.port=80"
+
+networks:
+    proxy:
+        external: true

@@ -13,21 +13,51 @@ services:
             - nc_db_data:/var/lib/mysql
         restart: ${RESTART}
     nextcloud:
-      image: linuxserver/nextcloud
-      container_name: nextcloud
-      volumes:
-          - ./data/nextcloud:/data
-          - ./data/nextcloud.conf:/config
-      # ports:
-      #     - 443:443
-      networks:
-        - nc
-        - proxy
-      env_file:
-          - .env
-          - nc.env
-      restart: ${RESTART}
+        image: linuxserver/nextcloud
+        container_name: nextcloud
+        volumes:
+            - ./data/data:/data
+            - ./data/conf:/config
+        # ports:
+        #     - 443:443
+        networks:
+            - nc
+            - proxy
+        env_file:
+            - .env
+            - nc.env
+        restart: ${RESTART}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.cloud.entrypoints=https"
+            - "traefik.http.routers.cloud.rule=Host(`draganczuk.cloud`)"
+            - "traefik.http.routers.cloud.tls=true"
+            - "traefik.http.services.cloud.loadbalancer.server.port=443"
+            - "traefik.http.services.cloud.loadbalancer.server.scheme=https"
+            - "traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue=ALLOW-FROM https://mydomain.com"
+            - "traefik.http.middlewares.nextcloud.headers.contentSecurityPolicy=frame-ancestors 'self' draganczuk.cloud *.draganczuk.cloud"
+            - "traefik.http.middlewares.nextcloud.headers.stsSeconds=155520011"
+            - "traefik.http.middlewares.nextcloud.headers.stsPreload=true"
+            - "traefik.http.middlewares.nextcloud-redirect.redirectregex.regex=/.well-known/(card|cal)dav"
+            - "traefik.http.middlewares.nextcloud-redirect.redirectregex.replacement=/remote.php/dav"
+            - "traefik.http.routers.cloud.middlewares=nextcloud,nextcloud-redirect"
 
+    collabora:
+        image: collabora/code
+        container_name: collabora
+        networks:
+            # - nc
+            - proxy
+        ports:
+            - 9980:9980
+        env_file: code.env
+        restart: ${RESTART}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.office.entrypoints=https"
+            - "traefik.http.routers.office.rule=Host(`office.draganczuk.cloud`)"
+            - "traefik.http.routers.office.tls=true"
+            - "traefik.http.services.office.loadbalancer.server.port=9980"
 networks:
     nc:
     proxy:
@@ -35,4 +65,3 @@ networks:
 
 volumes:
   nc_db_data:
-  nextcloud:

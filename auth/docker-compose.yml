@@ -1,0 +1,40 @@
+version: "3"
+services:
+    keycloak_db:
+        image: mariadb:10.4
+        container_name: keycloak_db
+        env_file:
+            - .env
+            - auth.env
+        networks:
+            - auth
+        volumes:
+            - keycloak_db_data:/var/lib/mysql
+    keycloak:
+        image: jboss/keycloak
+        container_name: keycloak
+        restart: ${RESTART}
+        depends_on:
+            - keycloak_db
+        networks:
+            - proxy
+            - auth
+        env_file:
+            - .env
+            - auth.env
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.auth.entrypoints=https"
+            - "traefik.http.routers.auth.rule=Host(`auth.draganczuk.cloud`)"
+            - "traefik.http.routers.auth.tls=true"
+            # - "traefik.http.routers.auth.tls.certresolver=acme"
+            - "traefik.http.services.auth.loadbalancer.server.port=8080"
+
+volumes:
+    keycloak_db_data:
+
+networks:
+    auth:
+        external: true
+    proxy:
+        external: true
