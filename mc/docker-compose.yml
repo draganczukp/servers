@@ -1,8 +1,16 @@
 version: '3.2'
 
 services:
-    mc:
-        container_name: "mc"
+    router:
+        container_name: "mc_router"
+        image: itzg/mc-router
+        ports:
+            - 25565:25565
+        networks:
+            - mc
+        command: --mapping=vanilla.mc.draganczuk.cloud=mc_vanilla:25565,mc.draganczuk.cloud=mc_modded:25565
+    mc_modded:
+        container_name: "mc_modded"
         image: itzg/minecraft-server:multiarch
         environment:
             EULA: "true"
@@ -17,9 +25,22 @@ services:
             LEVEL_TYPE: voidworld
             ALLOW_FLIGHT: "true"
         volumes:
-            - ./data:/data
-        ports:
-            - 25565:25565
+            - ./data/modded:/data
+        networks:
+            - mc
+    mc_vanilla:
+        container_name: "mc_vanilla"
+        image: itzg/minecraft-server:multiarch
+        environment:
+            EULA: "true"
+            MAX_MEMORY: 4G
+            ENABLE_RCON: "true"
+            RCON_PASSWORD: "rcon"
+            RCON_PORT: 28016
+            OPS: "draganczukp"
+            ALLOW_FLIGHT: "true"
+        volumes:
+            - ./data/vanilla:/data
         networks:
             - mc
     mc_rcon:
