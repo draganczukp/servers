@@ -1,0 +1,60 @@
+version: '3'
+services:
+    torrent:
+        image: linuxserver/qbittorrent
+        container_name: torrent
+        environment:
+            PUID: 1000
+            PGID: 1000
+            TZ: Europe/Warsaw
+            WEBUI_PORT: 8080
+        volumes:
+            - qbittorent_conf:/config
+            - qbittorent_dl:/downloads
+            - sg_incoming:/incoming
+            - ./data/onTxComplete.sh:/onTxComplete.sh
+        ports:
+            - 6881:6881
+            - 6881:6881/udp
+            # - 8080:8080
+        restart: unless-stopped
+        networks:
+            - proxy
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.torrent.entrypoints=https"
+            - "traefik.http.routers.torrent.rule=Host(`torrent.draganczuk.cloud`)"
+            - "traefik.http.routers.torrent.tls=true"
+            - "traefik.http.services.torrent.loadbalancer.server.port=8080"
+            # - "traefik.http.routers.torrent.middlewares=auth@file"
+    sickgear:
+        image: sickgear/sickgear
+        container_name: sickgear
+        networks:
+            - proxy
+        environment:
+            TZ: Europe/Warsaw
+        volumes:
+            - sg_data:/data
+            - sg_incoming:/incoming
+            - sg_tv:/tv
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.sickgear.entrypoints=https"
+            - "traefik.http.routers.sickgear.rule=Host(`sickgear.draganczuk.cloud`)"
+            - "traefik.http.routers.sickgear.tls=true"
+            - "traefik.http.services.sickgear.loadbalancer.server.port=8081"
+            - "traefik.http.routers.sickgear.middlewares=auth@file"
+        restart: unless-stopped
+
+
+networks:
+    proxy:
+        external: true
+
+volumes:
+    sg_data:
+    sg_incoming:
+    sg_tv:
+    qbittorent_dl:
+    qbittorent_conf:
