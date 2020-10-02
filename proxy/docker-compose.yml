@@ -52,7 +52,7 @@ services:
             traefik.http.routers.sso.service: sso@docker
             traefik.http.services.sso.loadbalancer.server.port: 4181
             traefik.http.routers.sso.middlewares: auth@file # <-- APPLY MIDDLEWARE TO ITSELF
-            restart: unless-stopped
+        restart: unless-stopped
 
 networks:
     proxy:

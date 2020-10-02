@@ -1,7 +1,7 @@
 version: "3"
 services:
     bitwarden:
-        image: bitwardenrs/server
+        image: bitwardenrs/server:latest
         container_name: bitwarden
         volumes:
             - ./data:/data

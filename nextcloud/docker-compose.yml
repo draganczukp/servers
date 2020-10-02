@@ -2,7 +2,7 @@ version: '3'
 
 services:
     nc_db:
-        image: mariadb:10.4
+        image: mariadb
         container_name: nc_db
         networks:
             - nc
@@ -16,10 +16,8 @@ services:
         image: linuxserver/nextcloud
         container_name: nextcloud
         volumes:
-            - ./data/data:/data
+            - ./data/data:/data # dafds
             - ./data/conf:/config
-        # ports:
-        #     - 443:443
         networks:
             - nc
             - proxy
@@ -34,13 +32,15 @@ services:
             - "traefik.http.routers.cloud.tls=true"
             - "traefik.http.services.cloud.loadbalancer.server.port=443"
             - "traefik.http.services.cloud.loadbalancer.server.scheme=https"
-            - "traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue=ALLOW-FROM https://mydomain.com"
+            - "traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue=ALLOW-FROM https://draganczuk.cloud"
             - "traefik.http.middlewares.nextcloud.headers.contentSecurityPolicy=frame-ancestors 'self' draganczuk.cloud *.draganczuk.cloud"
             - "traefik.http.middlewares.nextcloud.headers.stsSeconds=155520011"
             - "traefik.http.middlewares.nextcloud.headers.stsPreload=true"
             - "traefik.http.middlewares.nextcloud-redirect.redirectregex.regex=/.well-known/(card|cal)dav"
             - "traefik.http.middlewares.nextcloud-redirect.redirectregex.replacement=/remote.php/dav"
-            - "traefik.http.routers.cloud.middlewares=nextcloud,nextcloud-redirect"
+            - "traefik.http.middlewares.nextcloud-webfinger.redirectregex.regex=/.well-known/webfinger"
+            - "traefik.http.middlewares.nextcloud-webfinger.redirectregex.replacement=/public.php?service=webfinger"
+            - "traefik.http.routers.cloud.middlewares=nextcloud,nextcloud-redirect,nextcloud-webfinger"
 
     collabora:
         image: collabora/code

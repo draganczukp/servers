@@ -3,6 +3,7 @@ services:
     keycloak_db:
         image: mariadb:10.4
         container_name: keycloak_db
+        restart: unless-stopped
         env_file:
             - .env
             - auth.env
