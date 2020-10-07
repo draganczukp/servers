@@ -7,3 +7,4 @@ heimdall/config
 .env
 url
 *.env
+proxy/le_dump

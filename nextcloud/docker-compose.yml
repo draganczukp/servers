@@ -7,11 +7,10 @@ services:
         networks:
             - nc
         env_file:
-            - .env
             - nc.env
         volumes:
             - nc_db_data:/var/lib/mysql
-        restart: ${RESTART}
+        restart: unless-stopped
     nextcloud:
         image: linuxserver/nextcloud
         container_name: nextcloud
@@ -22,9 +21,8 @@ services:
             - nc
             - proxy
         env_file:
-            - .env
             - nc.env
-        restart: ${RESTART}
+        restart: unless-stopped
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.cloud.entrypoints=https"
@@ -51,7 +49,7 @@ services:
         ports:
             - 9980:9980
         env_file: code.env
-        restart: ${RESTART}
+        restart: unless-stopped
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.office.entrypoints=https"
