@@ -54,7 +54,5 @@ volumes:
     sg_data:
     sg_incoming:
     sg_tv:
-        external: true
-        name: media-data-killermenpl
     qbittorent_dl:
     qbittorent_conf:
