@@ -4,6 +4,7 @@ db/database/
 traefik/acme.json
 heimdall/config
 **/data/
+**/data.old/
 .env
 url
 *.env

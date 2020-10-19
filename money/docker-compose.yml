@@ -1,0 +1,53 @@
+version: "3"
+services:
+    ninja_nginx:
+        image: nginx
+        container_name: ninja_nginx
+        volumes:
+            - ./data/ninja.conf:/etc/nginx/conf.d/default.conf
+            - storage:/var/www/app/storage
+            - public:/var/www/app/public
+        networks:
+            - proxy
+            - invoices
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.invoice.entrypoints=https"
+            - "traefik.http.routers.invoice.rule=Host(`invoice.draganczuk.cloud`)"
+            - "traefik.http.routers.invoice.tls=true"
+            - "traefik.http.services.invoice.loadbalancer.server.port=80"
+        restart: unless-stopped
+    invoice:
+        image: invoiceninja/invoiceninja
+        container_name: invoice
+        env_file:
+            - invoices.env
+        networks:
+            - invoices
+        volumes:
+            - public:/var/www/app/public
+            - storage:/var/www/app/storage
+        restart: unless-stopped
+    invoice_db:
+        image: mysql:5
+        container_name: invoice_db
+        restart: unless-stopped
+        env_file:
+            - invoices.env
+        networks:
+            - invoices
+        volumes:
+            - mysql_data:/var/lib/mysql:rw
+
+
+
+volumes:
+    mysql_data:
+    public:
+    storage:
+
+networks:
+    invoices:
+    proxy:
+        external: true
+

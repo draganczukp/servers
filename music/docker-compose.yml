@@ -1,0 +1,49 @@
+version: '3'
+services:
+    deemix:
+        image: registry.gitlab.com/bockiii/deemix-docker
+        container_name: deemix
+        volumes:
+            - music_downloads:/downloads
+            - deemix_conf:/config
+        env_file:
+            - music.env
+        environment:
+            - PUID=1000
+            - PGID=1000
+        networks:
+            - proxy
+        restart: unless-stopped
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.deemix.entrypoints=https"
+            - "traefik.http.routers.deemix.rule=Host(`deemix.draganczuk.cloud`)"
+            - "traefik.http.routers.deemix.tls=true"
+            - "traefik.http.services.deemix.loadbalancer.server.port=6595"
+            - "traefik.http.routers.deemix.middlewares=auth@file"
+    navidrome:
+        image: deluan/navidrome:latest
+        container_name: navidrome
+        volumes:
+            - music_downloads:/music
+            - navidrome_data:/data
+        networks:
+            - proxy
+        environment:
+            - ND_LOGLEVEL=info
+        restart: unless-stopped
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.music.entrypoints=https"
+            - "traefik.http.routers.music.rule=Host(`music.draganczuk.cloud`)"
+            - "traefik.http.routers.music.tls=true"
+            - "traefik.http.services.music.loadbalancer.server.port=4533"
+
+networks:
+    proxy:
+        external: true
+
+volumes:
+    music_downloads:
+    navidrome_data:
+    deemix_conf:
